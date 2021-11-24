@@ -29,10 +29,9 @@ compile:
 	avr-size --format=avr --mcu=$(DEVICE) $(FILENAME).elf
 
 upload:
-	avrdude  -F -v -p $(DEVICE) -c $(PROGRAMMER) -P $(PORT) -b $(BAUD) -U flash:w:$(FILENAME).hex:i 
+	avrdude -v -p $(DEVICE) -c $(PROGRAMMER) -P $(PORT) -b $(BAUD) -U flash:w:$(FILENAME).hex:i 
 	
-#-e -Ulock:w:0xff:m -Uefuse:w:0xfd:m -Uhfuse:w:0xde:m
-
+	
 clean:
 	rm $(FILENAME).o
 	rm $(FILENAME2).o
