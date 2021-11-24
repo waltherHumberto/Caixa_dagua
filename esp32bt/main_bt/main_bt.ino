@@ -15,7 +15,6 @@ BluetoothSerial SerialBT;
 // GPIO where LED is connected to
 const int ledPin = 25;
 
-
 // Handle received and sent messages
 String message = "";
 char incomingChar;
@@ -41,32 +40,40 @@ void loop()
     {
         SerialBT.write(Serial.read());
     }
+    bool envio = false;
+
     if (SerialBT.available())
     {
         char incomingChar = SerialBT.read();
-                    message = "";
-
-        while (incomingChar != '\n')
+        if (incomingChar != '\n')
         {
             message += String(incomingChar);
         }
-      
+        else
+        {
+            message = "";
+        }
+
         Serial.write(incomingChar);
-            // Check received message and control output accordingly
-    if (message.startsWith("ev"))
-    {
-        SerialBT.println("evok\n");
+        // Check received message and control output accordingly
+        if (message.startsWith("ev") && !envio)
+        {
+            SerialBT.println("evok\n");
+            envio = true;
+            message = "";
+        }
+        else if (message == "lr" && !envio)
+        {
+            SerialBT.println("ev,18,12,15,17,\n");
+            envio = true;
+            message = "";
+        }
+        else if (message == "bb" && !envio)
+        {
+            SerialBT.println("bbok\n");
+            envio = true;
+            message = "";
+        }
     }
-    else if (message == "lr")
-    {
-        SerialBT.println("ev18,12,15,17,\n");
-    }
-    else if (message == "bb")
-    {
-        SerialBT.println("bbok\n");
-    }
-
-    }
-
-    delay(200);
+    delay(500);
 }
