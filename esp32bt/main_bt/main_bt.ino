@@ -64,7 +64,7 @@ void loop()
         }
         else if (message == "lr" && !envio)
         {
-            SerialBT.println("ev,18,12,15,17,\n");
+            SerialBT.println("ev,185,121,152,147,\n");
             envio = true;
             message = "";
         }

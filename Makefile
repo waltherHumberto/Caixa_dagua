@@ -10,6 +10,7 @@ FILENAME   = app/main
 FILENAME2  = app/display
 FILENAME3  = app/ultrassom
 FILENAME4  = app/bluetooh
+FILENAME5  = app/memoria
 PORT       = /dev/ttyACM*
 DEVICE     = atmega328p
 PROGRAMMER = arduino
@@ -17,14 +18,15 @@ BAUD       = 115200
 COMPILE    = avr-gcc -Wall -Os -mmcu=$(DEVICE)
 
 
-default: compile upload clean
+all: compile upload clean
 
 compile:
 	$(COMPILE) -c $(FILENAME).c -o $(FILENAME).o
 	$(COMPILE) -c $(FILENAME2).c -o $(FILENAME2).o
 	$(COMPILE) -c $(FILENAME3).c -o $(FILENAME3).o
 	$(COMPILE) -c $(FILENAME4).c -o $(FILENAME4).o
-	$(COMPILE) -o $(FILENAME).elf $(FILENAME).o $(FILENAME2).o $(FILENAME3).o $(FILENAME4).o
+	$(COMPILE) -c $(FILENAME5).c -o $(FILENAME5).o
+	$(COMPILE) -o $(FILENAME).elf $(FILENAME).o $(FILENAME2).o $(FILENAME3).o $(FILENAME4).o $(FILENAME5).o
 	avr-objcopy -j .text -j .data -O ihex $(FILENAME).elf $(FILENAME).hex 
 	avr-size --format=avr --mcu=$(DEVICE) $(FILENAME).elf
 
@@ -37,5 +39,6 @@ clean:
 	rm $(FILENAME2).o
 	rm $(FILENAME3).o
 	rm $(FILENAME4).o
+	rm $(FILENAME5).o
 	rm $(FILENAME).elf
 	rm $(FILENAME).hex

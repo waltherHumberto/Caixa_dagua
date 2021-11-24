@@ -6,6 +6,7 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include <string.h>
 #include "include/bluetooh.h"
 #include <stdbool.h>
 
@@ -22,5 +23,5 @@ bool verifica_bluetooth()
 
 void get_message_bt(char string)
 {
-    strcp(string, "EV");
+    strcat(string, "BB");
 }

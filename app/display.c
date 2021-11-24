@@ -6,10 +6,8 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
-
-
-
-void blink1(void){
-	PORTB ^= (1 << LED_PIN); // toggles  pin		
-	_delay_ms(500); // busy wait, 500ms
+int i;
+void put_mensage(char string_to_print)
+{
+	i = 1;
 }

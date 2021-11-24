@@ -2,6 +2,7 @@
     "files.associations": {
         "bluetooh.h": "c",
         "display.h": "c",
-        "ultrassom.h": "c"
+        "ultrassom.h": "c",
+        "memoria.h": "c"
     }
 }
