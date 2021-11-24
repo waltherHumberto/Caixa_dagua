@@ -2,12 +2,10 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include <stdbool.h>
 #include "include/ultrassom.h"
 #include "include/bluetooh.h"
 #include "include/display.h"
-
-#include <avr/io.h>
-#include <util/delay.h>
 
 #define ON 1
 #define OFF 0
@@ -21,6 +19,7 @@ void led_vermelho_state(bool state);
 
 int16_t altura_max = 18;
 int16_t altura_min = 14;
+bool encher = false;
 
 int main(void)
 {
@@ -33,7 +32,7 @@ int main(void)
     init_ultrassom();
     while (1)
     {
-        char mensagem[20] = ""; // Estou sempre zerando essa variavel 
+        char mensagem[20] = ""; // Estou sempre zerando essa variavel
 
         put_mensage("Max: 18 cm  Min: 14 cm ");
         put_mensage("Altura: 15 cm ");
@@ -74,7 +73,7 @@ int main(void)
         }
         _delay_ms(500); // busy wait, 500ms
     }
-    return;
+    return 1;
 }
 
 void bomba_state(bool state)
