@@ -6,7 +6,7 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
-#include "include/ultrassom.h"
+#include "ultrassom.h"
 #include <stdbool.h>
 
 void init_ultrassom(void)

@@ -7,7 +7,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <string.h>
-#include "include/bluetooh.h"
+#include "bluetooh.h"
 #include <stdbool.h>
 
 void init_bluetooth(void)

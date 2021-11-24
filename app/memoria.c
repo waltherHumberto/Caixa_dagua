@@ -1,6 +1,6 @@
 
 #include <avr/eeprom.h>
-#include "include/memoria.h"
+#include "memoria.h"
 
 void ler_informacoes_salvas(caixa_dagua *informacoes)
 {

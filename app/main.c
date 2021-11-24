@@ -4,10 +4,12 @@
 #include <util/delay.h>
 #include <stdbool.h>
 #include <string.h>
-#include "include/ultrassom.h"
-#include "include/bluetooh.h"
-#include "include/display.h"
-#include "include/memoria.h"
+#include "ultrassom.h"
+#include "bluetooh.h"
+#include "display.h"
+#include "memoria.h"
+#include "pcf8574.h"
+#include "lcdpcf8574.h"
 
 #define ON 1
 #define OFF 0
@@ -29,6 +31,7 @@ int main(void)
 
     // LED VERMELHO // LED VERDE   // BOMBA
     DDRD = _BV(BOMBA) | _BV(LDVD) | _BV(LDVM); // Configura Saida do LED e da Bomba
+    lcd_init(LCD_DISP_ON);
     ler_informacoes_salvas(&caixa);
     init_bluetooth(); // inicia a comunicação bluetooth com um ponteiro de flag para saber se chegou dado
     init_ultrassom();
@@ -37,8 +40,8 @@ int main(void)
     {
         char mensagem[50] = ""; // Estou sempre zerando essa variavel
 
-        put_mensage("Max: 18 cm  Min: 14 cm ");
-        put_mensage("Altura: 15 cm ");
+        lcd_puts(" Max:18 Min: 14 ");
+        lcd_puts("Atl:18 Bomba:ON");
 
         if (!verifica_bluetooth()) // Sem comando bluetooth recebido ele fica monitorando a caixa dagua
         {

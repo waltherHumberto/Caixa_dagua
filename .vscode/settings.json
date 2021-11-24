@@ -3,6 +3,9 @@
         "bluetooh.h": "c",
         "display.h": "c",
         "ultrassom.h": "c",
-        "memoria.h": "c"
+        "memoria.h": "c",
+        "pcf8574.h": "c",
+        "i2cmaster.h": "c",
+        "lcdpcf8574.h": "c"
     }
 }
