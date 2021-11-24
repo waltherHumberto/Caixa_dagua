@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "bluetooh.h": "c",
-        "display.h": "c"
+        "display.h": "c",
+        "ultrassom.h": "c"
     }
 }

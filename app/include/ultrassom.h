@@ -1,1 +1,3 @@
-void blink2(void); 
+void init_ultrassom(void);
+
+float get_distancia_ult();

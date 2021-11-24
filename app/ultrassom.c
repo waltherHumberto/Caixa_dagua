@@ -6,10 +6,16 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include "include/ultrassom.h"
+#include <stdbool.h>
 
+void init_ultrassom(void)
+{
+	PORTD = ~PORTD & LED_PIN;
+	_delay_ms(1000); // busy wait, 500ms
+}
 
-
-void blink2(void){
-	PORTB ^= (1 << LED_PIN); // toggles  pin		
-	_delay_ms(500); // busy wait, 500ms
+float get_distancia_ult()
+{
+	return 13;
 }

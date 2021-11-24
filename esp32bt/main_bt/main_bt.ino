@@ -1,6 +1,5 @@
 // Load libraries
 #include "BluetoothSerial.h"
-#include <OneWire.h>
 
 // Estou Fazendo um codigo para utilizar um esp32 para ser meu conversor bluetooth
 // Caso aconteça algum erro utilizando o HC-05 temos uma outra opção
@@ -16,12 +15,6 @@ BluetoothSerial SerialBT;
 // GPIO where LED is connected to
 const int ledPin = 25;
 
-// GPIO where the DS18B20 is connected to
-const int oneWireBus = 32;
-// Setup a oneWire instance to communicate with any OneWire devices
-OneWire oneWire(oneWireBus);
-// Pass our oneWire reference to Dallas Temperature sensor
-DallasTemperature sensors(&oneWire);
 
 // Handle received and sent messages
 String message = "";
@@ -37,13 +30,12 @@ void setup()
     pinMode(ledPin, OUTPUT);
     Serial.begin(115200);
     // Bluetooth device name
-    SerialBT.begin("ESP32");
+    SerialBT.begin("CAIXA-DAGUA");
     Serial.println("The device started, now you can pair it with bluetooth!");
 }
 
 void loop()
 {
-
     // Read received messages (LED control command)
     if (Serial.available())
     {
@@ -52,17 +44,15 @@ void loop()
     if (SerialBT.available())
     {
         char incomingChar = SerialBT.read();
-        if (incomingChar != '\n')
+                    message = "";
+
+        while (incomingChar != '\n')
         {
             message += String(incomingChar);
         }
-        else
-        {
-            message = "";
-        }
+      
         Serial.write(incomingChar);
-    }
-    // Check received message and control output accordingly
+            // Check received message and control output accordingly
     if (message.startsWith("ev"))
     {
         SerialBT.println("evok\n");
@@ -75,9 +65,8 @@ void loop()
     {
         SerialBT.println("bbok\n");
     }
-    else
-    {
-        SerialBT.println("error\n");
+
     }
-    delay(20);
+
+    delay(200);
 }

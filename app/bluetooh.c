@@ -6,9 +6,21 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include "include/bluetooh.h"
+#include <stdbool.h>
 
-void blink(void)
+void init_bluetooth(void)
 {
     PORTD = ~PORTD & LED_PIN;
     _delay_ms(1000); // busy wait, 500ms
+}
+
+bool verifica_bluetooth()
+{
+    return 1;
+}
+
+void get_message_bt(char string)
+{
+    strcp(string, "EV");
 }

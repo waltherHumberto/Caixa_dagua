@@ -63,7 +63,7 @@ int main(void)
         }
         else
         {
-            mensagem = get_message_bt();
+            get_message_bt(&mensagem);
             if (!(strncmp(mensagem, "EV", 2))) // Chegou mensagem de configuração
                 salva_flash(mensagem);
             if (!(strncmp(mensagem, "LR", 2))) // Chegou mensagem para ler as configurações
