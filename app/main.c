@@ -40,8 +40,8 @@ int main(void)
     {
         char mensagem[50] = ""; // Estou sempre zerando essa variavel
 
-        lcd_puts(" Max:18 Min: 14 ");
-        lcd_puts("Atl:18 Bomba:ON");
+        lcd_puts("Max:18.5 Atl:16 ");
+        lcd_puts("  Min:14.5 OFF  ");
 
         if (!verifica_bluetooth()) // Sem comando bluetooth recebido ele fica monitorando a caixa dagua
         {

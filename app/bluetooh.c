@@ -13,7 +13,6 @@
 void init_bluetooth(void)
 {
     PORTD = ~PORTD & LED_PIN;
-    _delay_ms(1000); // busy wait, 500ms
 }
 
 bool verifica_bluetooth()

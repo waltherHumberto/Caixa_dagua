@@ -12,7 +12,6 @@
 void init_ultrassom(void)
 {
 	PORTD = ~PORTD & LED_PIN;
-	_delay_ms(1000); // busy wait, 500ms
 }
 
 float get_distancia_ult()
