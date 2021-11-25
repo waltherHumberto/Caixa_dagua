@@ -17,7 +17,7 @@ void init_bluetooth(void)
 
 bool verifica_bluetooth()
 {
-    return 1;
+    return 0;
 }
 
 void get_message_bt(char string)

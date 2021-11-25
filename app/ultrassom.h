@@ -1,3 +1,3 @@
 void init_ultrassom(void);
 
-float get_distancia_ult();
+uint16_t get_distancia_ult();

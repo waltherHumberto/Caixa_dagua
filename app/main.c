@@ -21,6 +21,7 @@ void rotina_da_bomba();
 void bomba_state(bool state);
 void led_verde_state(bool state);
 void led_vermelho_state(bool state);
+void monta_mensagem(char *mensagem);
 
 caixa_dagua caixa;
 
@@ -28,53 +29,77 @@ bool encher = false;
 
 int main(void)
 {
-
+    char mensagem_lcd[33] = " ";
     // LED VERMELHO // LED VERDE   // BOMBA
     DDRD = _BV(BOMBA) | _BV(LDVD) | _BV(LDVM); // Configura Saida do LED e da Bomba
     lcd_init(LCD_DISP_ON);
+    lcd_puts("   Iniciando      Equipamento");
+    _delay_ms(2000); // busy wait, 500ms
+    lcd_clrscr();
+
+    lcd_puts("  Lab:Sistemas    Embarcados");
+    _delay_ms(2500); // busy wait, 500ms
+    lcd_clrscr();
+
     ler_informacoes_salvas(&caixa);
     init_bluetooth(); // inicia a comunicação bluetooth com um ponteiro de flag para saber se chegou dado
     init_ultrassom();
 
     while (1)
     {
-        char mensagem[50] = ""; // Estou sempre zerando essa variavel
-
-        lcd_puts("Max:18.5 Atl:16 ");
-        lcd_puts("  Min:14.5 OFF  ");
+        char mensagem_bluetooth[50] = ""; // Estou sempre zerando essa variavel
 
         if (!verifica_bluetooth()) // Sem comando bluetooth recebido ele fica monitorando a caixa dagua
         {
             rotina_da_bomba();
         }
+
         else
         {
-            get_message_bt(&mensagem);
+            get_message_bt(&mensagem_bluetooth);
 
-            if (!(strncmp(mensagem, "EV", 2))) // Chegou mensagem de configuração
+            if (!(strncmp(mensagem_bluetooth, "EV", 2))) // Chegou mensagem_bluetooth de configuração
                 salva_informacoes(&caixa);
 
-            if (!(strncmp(mensagem, "LR", 2))) // Chegou mensagem para ler as configurações
-                put_mensage("TUDO");
+            if (!(strncmp(mensagem_bluetooth, "LR", 2))) // Chegou mensagem_bluetooth para ler as configurações
+                lcd_puts("TUDO");
 
-            if (!(strncmp(mensagem, "BB", 2))) // Chegou mensagem para acionar a bomba
+            if (!(strncmp(mensagem_bluetooth, "BB", 2))) // Chegou mensagem_bluetooth para acionar a bomba
                 encher = true;
         }
+        monta_mensagem(&mensagem_lcd); // Montando  que será exibida no LCD
+        lcd_clrscr();
+        lcd_puts(mensagem_lcd);
+
         _delay_ms(500); // busy wait, 500ms
     }
     return 1;
 }
 
+void monta_mensagem(char *mensagem)
+{
+    char aux[32] = "";
+    sprintf(aux, "Mx:%d.%d\rMn:%d.%d\nAtl:%d.%d\r", caixa.altura_max / 10, caixa.altura_max % 10, caixa.altura_min / 10, caixa.altura_min % 10, caixa.altura_atual / 10, caixa.altura_atual % 10);
+    strcpy(mensagem, aux);
+
+    if (encher)
+        strcat(mensagem, " ON ");
+    else
+        strcat(mensagem, " OFF");
+}
+
 void rotina_da_bomba()
 {
-    if (get_distancia_ult() >= caixa.altura_max - 2) // Colocando um pouco de hysterese para dar tempo do MCU executar o comando e fehcar a bomba
+    caixa.altura_atual = get_distancia_ult();
+    if (caixa.altura_atual >= caixa.altura_max - 20) // Colocando um pouco de hysterese para dar tempo do MCU executar o comando e fehcar a bomba
     {
+
         encher = false;
         bomba_state(OFF);
         led_verde_state(ON);
         led_vermelho_state(OFF);
     }
-    else if (get_distancia_ult() < caixa.altura_min || encher)
+    else if (caixa.altura_atual <= caixa.altura_min || encher)
     {
         encher = true;
         bomba_state(ON);
