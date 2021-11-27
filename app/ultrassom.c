@@ -8,15 +8,14 @@
 #include <util/delay.h>
 #include "ultrassom.h"
 #include <stdbool.h>
-extern
 
-	void
-	init_ultrassom(void)
+void init_ultrassom(void)
 {
 	PORTD = ~PORTD & LED_PIN;
 }
 
 uint16_t get_distancia_ult()
-{	static int i = 100;
+{
+	static int i = 100;
 	return i++;
 }

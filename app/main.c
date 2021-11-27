@@ -2,6 +2,7 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include <avr/interrupt.h>
 #include <stdbool.h>
 #include <string.h>
 #include "ultrassom.h"
@@ -26,10 +27,14 @@ void monta_mensagem(char *mensagem);
 caixa_dagua caixa;
 
 bool encher = false;
+long dist;
 
 int main(void)
 {
     char mensagem_lcd[33] = " ";
+    TCCR1B = _BV(ICES1) | _BV(CS10);
+    TIMSK1 = _BV(ICIE1);
+    DDRD = _BV(DDD2);
     // LED VERMELHO // LED VERDE   // BOMBA
     DDRD = _BV(BOMBA) | _BV(LDVD) | _BV(LDVM); // Configura Saida do LED e da Bomba
     lcd_init(LCD_DISP_ON);
@@ -43,10 +48,13 @@ int main(void)
 
     ler_informacoes_salvas(&caixa);
     init_bluetooth(); // inicia a comunicação bluetooth com um ponteiro de flag para saber se chegou dado
-    init_ultrassom();
 
     while (1)
     {
+        PORTD |= _BV(PORTD2);
+        _delay_ms(10);
+        PORTD &= ~_BV(PORTD2);
+
         char mensagem_bluetooth[50] = ""; // Estou sempre zerando essa variavel
 
         if (!verifica_bluetooth()) // Sem comando bluetooth recebido ele fica monitorando a caixa dagua
@@ -76,6 +84,16 @@ int main(void)
     return 1;
 }
 
+ISR(TIMER1_CAP_VET)
+{
+    static long temp = 0;
+    if (TCCR1B & _BV(ICES1))
+        temp = ICR1;
+    else
+        dist = ((ICR1 - temp) * 1e6) / F_CPU / 5.8;
+    TCCR1B ^= _BV(ICES1);
+}
+
 void monta_mensagem(char *mensagem)
 {
     char aux[32] = "";
@@ -90,7 +108,7 @@ void monta_mensagem(char *mensagem)
 
 void rotina_da_bomba()
 {
-    caixa.altura_atual = get_distancia_ult();
+    caixa.altura_atual = (uint16_t)dist;
     if (caixa.altura_atual >= caixa.altura_max - 20) // Colocando um pouco de hysterese para dar tempo do MCU executar o comando e fehcar a bomba
     {
 
