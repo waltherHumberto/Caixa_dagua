@@ -42,21 +42,21 @@ int main(void)
     DDRD = _BV(BOMBA) | _BV(LDVD) | _BV(LDVM); // Configura Saida do LED e da Bomba
     lcd_init(LCD_DISP_ON);
     lcd_puts("   Iniciando      Equipamento");
-    _delay_ms(2000); // busy wait, 500ms
+    //_delay_ms(2000); // busy wait, 500ms
     lcd_clrscr();
 
     lcd_puts("  Lab:Sistemas    Embarcados");
-    _delay_ms(2500); // busy wait, 500ms
+    //_delay_ms(2500); // busy wait, 500ms
     lcd_clrscr();
 
     ler_informacoes_salvas(&caixa);
     init_bluetooth(); // inicia a comunicação bluetooth com um ponteiro de flag para saber se chegou dado
-    sei();
     while (1)
     {
         PORTD |= _BV(PORTD2);
         _delay_ms(10);
         PORTD &= ~_BV(PORTD2);
+        send_message_bt("Teste Bluetooth\n");
 
         char mensagem_bluetooth[50] = ""; // Estou sempre zerando essa variavel
 
@@ -67,13 +67,15 @@ int main(void)
 
         else
         {
-            get_message_bt(&mensagem_bluetooth);
+            send_message_bt("Mensagem Bluetooth\n");
+            //get_message_bt(&mensagem_bluetooth);
+
 
             if (!(strncmp(mensagem_bluetooth, "EV", 2))) // Chegou mensagem_bluetooth de configuração
                 salva_informacoes(&caixa);
 
             if (!(strncmp(mensagem_bluetooth, "LR", 2))) // Chegou mensagem_bluetooth para ler as configurações
-                lcd_puts("TUDO");
+                send_message_bt("TUDO\n");
 
             if (!(strncmp(mensagem_bluetooth, "BB", 2))) // Chegou mensagem_bluetooth para acionar a bomba
                 encher = true;
