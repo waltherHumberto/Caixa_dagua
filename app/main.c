@@ -32,7 +32,10 @@ long dist;
 int main(void)
 {
     char mensagem_lcd[33] = " ";
-    TCCR1B = _BV(ICES1) | _BV(CS10);
+    /* configure timer1 in normal mode */
+    TCCR1A = 0;
+    /* configure icr on rising edge with noise filter */
+    TCCR1B = _BV(ICES1) | _BV(ICNC1) | _BV(CS10);
     TIMSK1 = _BV(ICIE1);
     DDRD = _BV(DDD2);
     // LED VERMELHO // LED VERDE   // BOMBA
@@ -48,7 +51,7 @@ int main(void)
 
     ler_informacoes_salvas(&caixa);
     init_bluetooth(); // inicia a comunicação bluetooth com um ponteiro de flag para saber se chegou dado
-
+    sei();
     while (1)
     {
         PORTD |= _BV(PORTD2);
@@ -86,12 +89,7 @@ int main(void)
 
 ISR(TIMER1_CAP_VET)
 {
-    static long temp = 0;
-    if (TCCR1B & _BV(ICES1))
-        temp = ICR1;
-    else
-        dist = ((ICR1 - temp) * 1e6) / F_CPU / 5.8;
-    TCCR1B ^= _BV(ICES1);
+    dist++;
 }
 
 void monta_mensagem(char *mensagem)
