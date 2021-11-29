@@ -13,6 +13,7 @@ void ler_informacoes_salvas(caixa_dagua *informacoes)
         informacoes->altura_min = MAX_DEFAULT;
     if (informacoes->altura_instalada == 0xffff)
         informacoes->altura_instalada = MIN_DEFAULT;
+
 }
 
 void salva_informacoes(caixa_dagua *informacoes)

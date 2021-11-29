@@ -44,17 +44,19 @@ int main(void)
     DDRD = _BV(BOMBA) | _BV(LDVD) | _BV(LDVM) | _BV(TRIGGER); // Configura Saida do LED e da Bomba
     lcd_init(LCD_DISP_ON);
     lcd_puts("   Iniciando      Equipamento");
-    _delay_ms(2000); // busy wait, 500ms
+    _delay_ms(500); // busy wait, 500ms
     lcd_clrscr();
 
     lcd_puts("  Lab:Sistemas    Embarcados");
-    _delay_ms(2500); // busy wait, 500ms
+    _delay_ms(500); // busy wait, 500ms
     lcd_clrscr();
 
     ler_informacoes_salvas(&caixa);
+
     uart_init(BAUDRATE, OFF); // inicia a comunicação bluetooth com um ponteiro de flag para saber se chegou dado
     sei();
     uart_send_string("Iniciando Bluetooth\n");
+    caixa.altura_atual = 200;
 
     while (1)
     {
@@ -67,26 +69,24 @@ int main(void)
         PORTD &= ~_BV(PORTD2);
 
         uart_send_string("Teste Bluetooth");
-
         rotina_da_bomba();
 
         if (uart_read_count()) // Chegou mensagem Bluetooth
         {
-
             uart_get_string(&mensagem_bluetooth);
             uart_send_string(mensagem_bluetooth);
 
-            if (!(strncmp(mensagem_bluetooth, "EV", 2)))
+            if (!(strncmp(mensagem_bluetooth, "ev", 2)))
             { // Chegou mensagem_bluetooth de configuração
                 uart_send_string("evok\n");
-                //trata_mensagem();
+                trata_mensagem();
                 salva_informacoes(&caixa);
             }
-            else if (!(strncmp(mensagem_bluetooth, "LR", 2)))
+            else if (!(strncmp(mensagem_bluetooth, "lr", 2)))
             { // Chegou mensagem_bluetooth para ler as configurações
                 monta_resposta();
             }
-            else if (!(strncmp(mensagem_bluetooth, "BB", 2)))
+            else if (!(strncmp(mensagem_bluetooth, "bb", 2)))
             { // Chegou mensagem_bluetooth para mudar o estado da bomba
                 encher = !encher;
                 uart_send_string("bbok\n");
@@ -126,31 +126,29 @@ void monta_mensagem(char *mensagem)
 
 void trata_mensagem(char *mensagem)
 {
-    int i = 3;
     int z = 0;
     int y = 0;
     int length = 0;
-    for (int z = i; mensagem[z] != ',' || mensagem[z] != '\n'; z++)
-        length++;
-    for (y = 0; y < length; y++)
-    {
-        caixa.altura_instalada += mensagem[i] - '0' * 10 ^ length;
-        i++;
-        length--;
-    }
-    caixa.altura_max = mensagem[i] - '0';
-    caixa.altura_min = mensagem[i] - '0';
+
+    caixa.altura_instalada = (mensagem[3] - '0') * (10 ^ 2) +
+                             (mensagem[4] - '0') * (10 ^ 1) +
+                             (mensagem[5] - '0') * (10 ^ 0);
+    caixa.altura_max = (mensagem[7] - '0') * (10 ^ 2) +
+                       (mensagem[8] - '0') * (10 ^ 1) +
+                       (mensagem[9] - '0') * (10 ^ 0);
+    caixa.altura_min = (mensagem[11] - '0') * (10 ^ 2) +
+                       (mensagem[12] - '0') * (10 ^ 1) +
+                       (mensagem[13] - '0') * (10 ^ 0);
 }
 void monta_resposta()
 {
     char resposta[50] = "";
-    sprintf(resposta, "ev,%d,%d,%d,%d,\r\n", caixa.altura_instalada, caixa.altura_max, caixa.altura_min, caixa.altura_atual);
+    sprintf(resposta, "lr,%d,%d,%d,%d,\r\n", caixa.altura_instalada, caixa.altura_max, caixa.altura_min, caixa.altura_atual);
     uart_send_string(resposta);
 }
 
 void rotina_da_bomba()
 {
-    caixa.altura_atual = (uint16_t)dist;
     if (caixa.altura_atual >= caixa.altura_max - 20) // Colocando um pouco de hysterese para dar tempo do MCU executar o comando e fehcar a bomba
     {
 
@@ -161,6 +159,7 @@ void rotina_da_bomba()
     }
     else if (caixa.altura_atual <= caixa.altura_min || encher)
     {
+        caixa.altura_atual++;
         encher = true;
         bomba_state(ON);
         led_verde_state(OFF);
@@ -168,6 +167,8 @@ void rotina_da_bomba()
     }
     else
     {
+        caixa.altura_atual = 200;
+
         encher = false;
         bomba_state(OFF);
         led_verde_state(ON);
