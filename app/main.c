@@ -79,7 +79,7 @@ int main(void)
             if (!(strncmp(mensagem_bluetooth, "ev", 2)))
             { // Chegou mensagem_bluetooth de configuração
                 uart_send_string("evok\n");
-                trata_mensagem();
+                trata_mensagem(&mensagem_bluetooth);
                 salva_informacoes(&caixa);
             }
             else if (!(strncmp(mensagem_bluetooth, "lr", 2)))
