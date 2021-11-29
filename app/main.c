@@ -54,6 +54,8 @@ int main(void)
     ler_informacoes_salvas(&caixa);
     uart_init(BAUDRATE, OFF); // inicia a comunicação bluetooth com um ponteiro de flag para saber se chegou dado
     sei();
+    uart_send_string("Iniciando Bluetooth\n");
+
     while (1)
     {
 
@@ -64,18 +66,21 @@ int main(void)
         _delay_ms(10);
         PORTD &= ~_BV(PORTD2);
 
-        uart_send_string("Teste Bluetooth\n");
+        uart_send_string("Teste Bluetooth");
 
         rotina_da_bomba();
 
         if (uart_read_count()) // Chegou mensagem Bluetooth
         {
+
             uart_get_string(&mensagem_bluetooth);
+            uart_send_string(mensagem_bluetooth);
+
             if (!(strncmp(mensagem_bluetooth, "EV", 2)))
             { // Chegou mensagem_bluetooth de configuração
-                trata_mensagem();
-                salva_informacoes(&caixa);
                 uart_send_string("evok\n");
+                //trata_mensagem();
+                salva_informacoes(&caixa);
             }
             else if (!(strncmp(mensagem_bluetooth, "LR", 2)))
             { // Chegou mensagem_bluetooth para ler as configurações
@@ -92,7 +97,7 @@ int main(void)
         lcd_clrscr();
         lcd_puts(mensagem_lcd);
 
-        _delay_ms(500); // busy wait, 500ms
+        _delay_ms(250); // busy wait, 500ms
     }
     return 1;
 }

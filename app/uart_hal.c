@@ -97,10 +97,13 @@ void uart_get_string(uint8_t *c)
 {
 	uint16_t i = 0;
 	char teste[20] = "APENAS TESTES \r\n";
-	while (teste[i] != '\0')
+	while (uart_read_count())
 	{
-		c[i] = teste[i];
+		c[i] = uart_read();
+		i++;
+		_delay_ms(100); // busy wait, 500ms
 	}
+
 }
 
 uint16_t uart_read_count(void)
