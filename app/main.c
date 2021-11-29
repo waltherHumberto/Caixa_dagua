@@ -44,15 +44,16 @@ int main(void)
     DDRD = _BV(BOMBA) | _BV(LDVD) | _BV(LDVM) | _BV(TRIGGER); // Configura Saida do LED e da Bomba
     lcd_init(LCD_DISP_ON);
     lcd_puts("   Iniciando      Equipamento");
-    //_delay_ms(2000); // busy wait, 500ms
+    _delay_ms(2000); // busy wait, 500ms
     lcd_clrscr();
 
     lcd_puts("  Lab:Sistemas    Embarcados");
-    //_delay_ms(2500); // busy wait, 500ms
+    _delay_ms(2500); // busy wait, 500ms
     lcd_clrscr();
 
     ler_informacoes_salvas(&caixa);
     uart_init(BAUDRATE, OFF); // inicia a comunicação bluetooth com um ponteiro de flag para saber se chegou dado
+    sei();
     while (1)
     {
 
