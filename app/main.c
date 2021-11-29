@@ -64,18 +64,15 @@ int main(void)
         char mensagem_bluetooth[50] = ""; // Estou sempre zerando essa variavel
         char resposta[50] = "";
 
-        PORTD |= _BV(PORTD2);
+        PORTD |= _BV(TRIGGER);
         _delay_ms(10);
-        PORTD &= ~_BV(PORTD2);
+        PORTD &= ~_BV(TRIGGER);
 
-        uart_send_string("Teste Bluetooth");
         rotina_da_bomba();
 
         if (uart_read_count()) // Chegou mensagem Bluetooth
         {
             uart_get_string(&mensagem_bluetooth);
-            uart_send_string(mensagem_bluetooth);
-
             if (!(strncmp(mensagem_bluetooth, "ev", 2)))
             { // Chegou mensagem_bluetooth de configuração
                 uart_send_string("evok\n");
@@ -90,6 +87,10 @@ int main(void)
             { // Chegou mensagem_bluetooth para mudar o estado da bomba
                 encher = !encher;
                 uart_send_string("bbok\n");
+            }
+            else
+            {
+                uart_send_string("error\n");
             }
         }
 
@@ -115,7 +116,7 @@ ISR(TIMER1_CAP_VET)
 void monta_mensagem(char *mensagem)
 {
     char aux[32] = "";
-    sprintf(aux, "Mx:%d.%d\rMn:%d.%d\nAtl:%d.%d\r", caixa.altura_max, caixa.altura_max % 10, caixa.altura_min / 10, caixa.altura_min % 10, caixa.altura_atual / 10, caixa.altura_atual % 10);
+    sprintf(aux, "Mx:%d.%d\rMn:%d.%d\nAtl:%d.%d\r", caixa.altura_max / 10, caixa.altura_max % 10, caixa.altura_min / 10, caixa.altura_min % 10, caixa.altura_atual / 10, caixa.altura_atual % 10);
     strcpy(mensagem, aux);
 
     if (encher)
@@ -126,13 +127,9 @@ void monta_mensagem(char *mensagem)
 
 void trata_mensagem(char *mensagem)
 {
-    caixa.altura_instalada = (mensagem[3] - '0') ;
-    caixa.altura_max = (mensagem[7] - '0') * (10 ^ 2) +
-                       (mensagem[8] - '0') * (10 ^ 1) +
-                       (mensagem[9] - '0') * (10 ^ 0);
-    caixa.altura_min = (mensagem[11] - '0') * (10 ^ 2) +
-                       (mensagem[12] - '0') * (10 ^ 1) +
-                       (mensagem[13] - '0') * (10 ^ 0);
+    caixa.altura_instalada = ((mensagem[3] - '0') * 100) + ((mensagem[4] - '0') * 10) + (mensagem[5] - '0');
+    caixa.altura_max = ((mensagem[7] - '0') * 100) + ((mensagem[8] - '0') * 10) + (mensagem[9] - '0');
+    caixa.altura_min = ((mensagem[11] - '0') * 100) + ((mensagem[12] - '0') * 10) + (mensagem[13] - '0');
 }
 void monta_resposta()
 {
@@ -143,9 +140,10 @@ void monta_resposta()
 
 void rotina_da_bomba()
 {
+    caixa.altura_atual = dist;
+
     if (caixa.altura_atual >= caixa.altura_max - 20) // Colocando um pouco de hysterese para dar tempo do MCU executar o comando e fehcar a bomba
     {
-
         encher = false;
         bomba_state(OFF);
         led_verde_state(ON);
@@ -153,7 +151,6 @@ void rotina_da_bomba()
     }
     else if (caixa.altura_atual <= caixa.altura_min || encher)
     {
-        caixa.altura_atual++;
         encher = true;
         bomba_state(ON);
         led_verde_state(OFF);
@@ -161,8 +158,6 @@ void rotina_da_bomba()
     }
     else
     {
-        caixa.altura_atual = 200;
-
         encher = false;
         bomba_state(OFF);
         led_verde_state(ON);

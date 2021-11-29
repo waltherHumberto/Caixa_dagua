@@ -90,7 +90,6 @@ void uart_send_string(uint8_t *c)
 		i++;
 
 	} while (c[i] != '\0');
-	uart_send_byte(c[i]);
 }
 
 void uart_get_string(uint8_t *c)
@@ -103,7 +102,6 @@ void uart_get_string(uint8_t *c)
 		i++;
 		_delay_ms(100); // busy wait, 500ms
 	}
-
 }
 
 uint16_t uart_read_count(void)
