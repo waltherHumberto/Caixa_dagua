@@ -93,6 +93,16 @@ void uart_send_string(uint8_t *c)
 	uart_send_byte(c[i]);
 }
 
+void uart_get_string(uint8_t *c)
+{
+	uint16_t i = 0;
+	char teste[20] = "APENAS TESTES \r\n";
+	while (teste[i] != '\0')
+	{
+		c[i] = teste[i];
+	}
+}
+
 uint16_t uart_read_count(void)
 {
 	return rx_count;

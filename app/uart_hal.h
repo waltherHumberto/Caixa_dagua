@@ -18,7 +18,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
- */ 
+ */
 
 #ifndef UART_HAL_H_
 #define UART_HAL_H_
@@ -32,11 +32,12 @@ SOFTWARE.
 
 #define RX_BUFFER_SIZE 128
 
-void uart_init(uint32_t baud,uint8_t high_speed);
+void uart_init(uint32_t baud, uint8_t high_speed);
 void uart_send_byte(uint8_t c);
-void uart_send_array(uint8_t *c,uint16_t len);
+void uart_send_array(uint8_t *c, uint16_t len);
 void uart_send_string(uint8_t *c);
 uint16_t uart_read_count(void);
 uint8_t uart_read(void);
+void uart_get_string(uint8_t *c);
 
 #endif /* UART_HAL_H_ */
