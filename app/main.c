@@ -115,7 +115,7 @@ ISR(TIMER1_CAP_VET)
 void monta_mensagem(char *mensagem)
 {
     char aux[32] = "";
-    sprintf(aux, "Mx:%d.%d\rMn:%d.%d\nAtl:%d.%d\r", caixa.altura_max / 10, caixa.altura_max % 10, caixa.altura_min / 10, caixa.altura_min % 10, caixa.altura_atual / 10, caixa.altura_atual % 10);
+    sprintf(aux, "Mx:%d.%d\rMn:%d.%d\nAtl:%d.%d\r", caixa.altura_max, caixa.altura_max % 10, caixa.altura_min / 10, caixa.altura_min % 10, caixa.altura_atual / 10, caixa.altura_atual % 10);
     strcpy(mensagem, aux);
 
     if (encher)
@@ -126,13 +126,7 @@ void monta_mensagem(char *mensagem)
 
 void trata_mensagem(char *mensagem)
 {
-    int z = 0;
-    int y = 0;
-    int length = 0;
-
-    caixa.altura_instalada = (mensagem[3] - '0') * (10 ^ 2) +
-                             (mensagem[4] - '0') * (10 ^ 1) +
-                             (mensagem[5] - '0') * (10 ^ 0);
+    caixa.altura_instalada = (mensagem[3] - '0') ;
     caixa.altura_max = (mensagem[7] - '0') * (10 ^ 2) +
                        (mensagem[8] - '0') * (10 ^ 1) +
                        (mensagem[9] - '0') * (10 ^ 0);
