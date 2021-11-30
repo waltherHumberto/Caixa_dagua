@@ -8,8 +8,7 @@
 
 FILENAME   = app/main
 FILENAME2  = app/display
-FILENAME3  = app/ultrassom
-FILENAME4  = app/bluetooh
+FILENAME3  = app/uart_hal
 FILENAME5  = app/memoria
 FILENAME6  = app/twimaster
 FILENAME7  = app/pcf8574
@@ -27,12 +26,11 @@ compile:
 	$(COMPILE) -c $(FILENAME).c -o $(FILENAME).o
 	$(COMPILE) -c $(FILENAME2).c -o $(FILENAME2).o
 	$(COMPILE) -c $(FILENAME3).c -o $(FILENAME3).o
-	$(COMPILE) -c $(FILENAME4).c -o $(FILENAME4).o
 	$(COMPILE) -c $(FILENAME5).c -o $(FILENAME5).o
 	$(COMPILE) -c $(FILENAME6).c -o $(FILENAME6).o
 	$(COMPILE) -c $(FILENAME7).c -o $(FILENAME7).o
 	$(COMPILE) -c $(FILENAME8).c -o $(FILENAME8).o
-	$(COMPILE) -o $(FILENAME).elf $(FILENAME).o $(FILENAME2).o $(FILENAME3).o $(FILENAME4).o $(FILENAME5).o $(FILENAME6).o $(FILENAME7).o $(FILENAME8).o
+	$(COMPILE) -o $(FILENAME).elf $(FILENAME).o $(FILENAME2).o $(FILENAME3).o  $(FILENAME5).o $(FILENAME6).o $(FILENAME7).o $(FILENAME8).o
 	avr-objcopy -j .text -j .data -O ihex $(FILENAME).elf $(FILENAME).hex 
 	avr-size --format=avr --mcu=$(DEVICE) $(FILENAME).elf
 
@@ -44,10 +42,10 @@ clean:
 	rm $(FILENAME).o
 	rm $(FILENAME2).o
 	rm $(FILENAME3).o
-	rm $(FILENAME4).o
 	rm $(FILENAME5).o
 	rm $(FILENAME6).o
 	rm $(FILENAME7).o
 	rm $(FILENAME8).o
 	rm $(FILENAME).elf
 	rm $(FILENAME).hex
+

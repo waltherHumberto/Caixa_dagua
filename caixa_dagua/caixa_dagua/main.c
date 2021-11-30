@@ -30,7 +30,7 @@ void monta_resposta();
 caixa_dagua caixa;
 
 bool encher = false;
-long dist;
+int dist;
 
 int main(void)
 {
@@ -56,8 +56,6 @@ int main(void)
     uart_init(BAUDRATE, OFF); // inicia a comunicação bluetooth com um ponteiro de flag para saber se chegou dado
     sei();
     uart_send_string("Iniciando Bluetooth\n");
-    caixa.altura_atual = 200;
-
     while (1)
     {
 
@@ -75,9 +73,9 @@ int main(void)
             uart_get_string(&mensagem_bluetooth);
             if (!(strncmp(mensagem_bluetooth, "ev", 2)))
             { // Chegou mensagem_bluetooth de configuração
-                uart_send_string("evok\n");
                 trata_mensagem(&mensagem_bluetooth);
                 salva_informacoes(&caixa);
+                uart_send_string("evok\n");
             }
             else if (!(strncmp(mensagem_bluetooth, "lr", 2)))
             { // Chegou mensagem_bluetooth para ler as configurações
@@ -98,12 +96,12 @@ int main(void)
         lcd_clrscr();
         lcd_puts(mensagem_lcd);
 
-        _delay_ms(250); // busy wait, 500ms
+        _delay_ms(500); // busy wait, 500ms
     }
     return 1;
 }
 
-ISR(TIMER1_CAP_VET)
+ISR(TIMER1_CAPT_vect)
 {
     static long temp = 0;
     if (TCCR1B & _BV(ICES1))
@@ -140,7 +138,8 @@ void monta_resposta()
 
 void rotina_da_bomba()
 {
-    caixa.altura_atual = dist;
+    if (dist > 0) // Tentando limpas alguns ruidos de sinal
+        caixa.altura_atual = (int16_t)dist;
 
     if (caixa.altura_atual >= caixa.altura_max - 20) // Colocando um pouco de hysterese para dar tempo do MCU executar o comando e fehcar a bomba
     {
@@ -187,4 +186,5 @@ void led_vermelho_state(bool state)
         PORTD |= (1 << LDVM); // Liga LED
     else
         PORTD &= ~(1 << LDVM); // Apaga LED
+    PORTD &= ~(1 << LDVM);     // Apaga LED
 }

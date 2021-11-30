@@ -1,0 +1,1 @@
+ -C "C:\Program Files (x86)\Arduino\hardware\tools\avr\etc\avrdude.conf" -p atmega328p -c arduino -P  COM4 -b 115200 -U flash:w:"$(ProjectDir)Release\$(TargetName).hex":i
